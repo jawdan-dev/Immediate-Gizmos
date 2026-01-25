@@ -1,6 +1,17 @@
 # Immediate Gizmos
 Immediate mode gizmos for all to use!
 
+## Content
+- [Immediate Gizmos](#immediate-gizmos)
+	- [Content](#content)
+	- [Usage](#usage)
+		- [State](#state)
+			- [Color](#color)
+			- [Transform](#transform)
+			- [Cleanup](#cleanup)
+		- [Example Output](#example-output)
+	- [Function List](#function-list)
+
 ## Usage
 
 ImmediateGizmos is used with calls through the `ImmediateGizmos` namespace.

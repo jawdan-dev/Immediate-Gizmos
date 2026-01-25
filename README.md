@@ -35,12 +35,13 @@ ImmediateGizmos.lineCapsule(Vector3(0, 0, -2.0), 0.5, 2.0);
 Additionally, a *transform* can be set globally for all subsequent gizmo calls with `ImmediateGizmos.transform = ...`.
 
 ```gdscript
-ImmediateGizmos.color = Color.MAGENTA;
 for i : float in range(3):
-	var rot := Basis.from_euler(Vector3(0.0, TAU * 0.1 * i, 0.0));
-	var pos := Vector3(0.0, i, 2.0);
 	# Set a global transform!
+	var pos := Vector3(0.0, i, 2.0);
+	var rot := Basis.from_euler(Vector3(0.0, TAU * 0.1 * i, 0.0));
 	ImmediateGizmos.transform = Transform3D(rot, pos);
+	#
+	ImmediateGizmos.color = [ Color.MAGENTA, Color.RED, Color.ORANGE ][i];
 	ImmediateGizmos.lineCube(Vector3.ZERO, 0.5);
 ```
 

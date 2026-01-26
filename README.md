@@ -1,9 +1,10 @@
-# Immediate Gizmos
-Immediate mode gizmos for all to use!
+# Immediate Gizmos <img height="40px" src="./media/logo-transparent.png" alt="">
+Immediate-mode gizmos for all to use!
 
 ## Content
-- [Immediate Gizmos](#immediate-gizmos)
+- [Immediate Gizmos ](#immediate-gizmos-)
 	- [Content](#content)
+	- [About](#about)
 	- [Usage](#usage)
 		- [State](#state)
 			- [Color](#color)
@@ -11,6 +12,14 @@ Immediate mode gizmos for all to use!
 			- [Cleanup](#cleanup)
 		- [Example Output](#example-output)
 	- [Function List](#function-list)
+
+## About
+
+ImmediateGizmos is an immediate-mode gizmos drawing plugin/addon for Godot 4.0!
+ImmediateGizmos is designed to allow you to draw simple gizmos wherever and whenever in the code of your project!
+
+![Example 1 debug usage in the game Chicken-Roii](/media/chicken-roii-1.png)
+![Example 2 debug usage in the game Chicken-Roii](/media/chicken-roii-2.png)
 
 ## Usage
 

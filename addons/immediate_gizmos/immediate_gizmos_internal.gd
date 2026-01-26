@@ -1,8 +1,12 @@
 extends MeshInstance3D
 class_name ImmediateGizmosInternal;
 
+const _processPriority = -999;
+
 static var gizmoRoot : ImmediateGizmosInternal = null;
 static var gizmoMaterial : ShaderMaterial = preload("res://addons/immediate_gizmos/immediate_gizmos.tres");
+
+##########################################################################
 
 class ImmediateGizmosRenderInstance:
 	var meshInstance : MeshInstance3D;
@@ -74,17 +78,15 @@ static func endDraw(color : Color, transform3d : Transform3D) -> void:
 ##########################################################################
 
 func _ready() -> void:
-	process_priority = -999;
-	process_physics_priority = -999;
+	process_priority = _processPriority;
+	process_physics_priority = _processPriority;
 
 func _process(_delta: float) -> void:
 	if (s_instance == null): return;
 	s_instance.mesh.clear_surfaces();
-	ImmediateGizmos.reset();
 
 func _physics_process(_delta: float) -> void:
 	if (s_physiscsInstance == null): return;
 	s_physiscsInstance.mesh.clear_surfaces();
-	ImmediateGizmos.reset();
 
 ##########################################################################

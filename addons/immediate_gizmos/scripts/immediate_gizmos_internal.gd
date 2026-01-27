@@ -12,12 +12,12 @@ static var gizmo_material_3d : ShaderMaterial = preload("res://addons/immediate_
 class ImmediateGizmosRenderInstance:
 	var meshInstance;
 	var mesh : ImmediateMesh;
-	var is3D : bool;
+	var is_3d : bool;
 
-	func _init(_is3d : bool) -> void:
-		is3D = _is3d;
+	func _init(is3D : bool) -> void:
+		is_3d = is3D;
 		
-		meshInstance = MeshInstance3D.new() if is3D else MeshInstance2D.new();
+		meshInstance = MeshInstance3D.new() if is_3d else MeshInstance2D.new();
 		mesh = ImmediateMesh.new();
 		
 		if (is3D):
@@ -32,35 +32,59 @@ class ImmediateGizmosRenderInstance:
 
 		ImmediateGizmosInternal.gizmo_root.add_child(meshInstance);
 		
-static var instance_2d : ImmediateGizmosRenderInstance = null;
-static var physiscs_instance_2d : ImmediateGizmosRenderInstance = null;
-static var instance_3d : ImmediateGizmosRenderInstance = null;
-static var physiscs_instance_3d : ImmediateGizmosRenderInstance = null;
+class ImmediateGizmosRenderBlock:
+	var instance_counter := 0;
+	var instances : Array[ImmediateGizmosRenderInstance] = [];
+	var is_3d : bool;
+	
+	func _init(is3D : bool) -> void:
+		is_3d = is3D;
+	
+	func get_instance():
+		if (instances.size() <= instance_counter):
+			instance_counter = instances.size();
+			instances.append(ImmediateGizmosRenderInstance.new(is_3d));
+		elif (instances[instance_counter].mesh.get_surface_count() >= RenderingServer.MAX_MESH_SURFACES):
+			instance_counter += 1;
+			return get_instance();
+		return instances[instance_counter];
+	
+	func clear():
+		for instance in instances:
+			instance.mesh.clear_surfaces();
+		instance_counter = 0;
+
+class ImmediateGizmosRenderSelector:
+	var process_block : ImmediateGizmosRenderBlock;
+	var physics_process_block : ImmediateGizmosRenderBlock;
+	func _init(is3D : bool) -> void:
+		process_block = ImmediateGizmosRenderBlock.new(is3D);
+		physics_process_block = ImmediateGizmosRenderBlock.new(is3D);
+		
+	func get_instance():
+		if (Engine.is_in_physics_frame()):
+			return physics_process_block.get_instance();
+		return process_block.get_instance();
+		
+	func clear():
+		if (Engine.is_in_physics_frame()):
+			return physics_process_block.clear();
+		return process_block.clear();
+		
+static var selector_2d : ImmediateGizmosRenderSelector = ImmediateGizmosRenderSelector.new(false);
+static var selector_3d : ImmediateGizmosRenderSelector = ImmediateGizmosRenderSelector.new(true);
 
 static func get_instance(is3D : bool) -> ImmediateGizmosRenderInstance:
 	if (gizmo_root == null):
 		assert(ProjectSettings.get_setting("application/run/main_loop_type") == "SceneTree", "To use ImmediateGizmos, the project main loop must be of type 'SceneTree'");
 		var sceneTree := Engine.get_main_loop() as SceneTree;
 		gizmo_root = ImmediateGizmosInternal.new();
+		gizmo_root.name = "Gizmo Root";
 		sceneTree.root.add_child(gizmo_root);
 
 	if (is3D):
-		if (Engine.is_in_physics_frame()):
-			if (physiscs_instance_3d == null):
-				physiscs_instance_3d = ImmediateGizmosRenderInstance.new(true);
-			return physiscs_instance_3d;
-		else:
-			if (instance_3d == null):
-				instance_3d = ImmediateGizmosRenderInstance.new(true);
-			return instance_3d;
-	if (Engine.is_in_physics_frame()):
-		if (physiscs_instance_2d == null):
-			physiscs_instance_2d = ImmediateGizmosRenderInstance.new(false);
-		return physiscs_instance_2d;
-	else:
-		if (instance_2d == null):
-			instance_2d = ImmediateGizmosRenderInstance.new(false);
-		return instance_2d;
+		return selector_3d.get_instance();
+	return selector_2d.get_instance();
 
 ##########################################################################
 
@@ -140,15 +164,11 @@ func _ready() -> void:
 	process_physics_priority = target_process_priority;
 
 func _process(_delta: float) -> void:
-	if (instance_2d != null):
-		instance_2d.mesh.clear_surfaces();
-	if (instance_3d != null):
-		instance_3d.mesh.clear_surfaces();
+	selector_2d.clear();
+	selector_3d.clear();
 
 func _physics_process(_delta: float) -> void:
-	if (physiscs_instance_2d != null):
-		physiscs_instance_2d.mesh.clear_surfaces();
-	if (physiscs_instance_3d != null):
-		physiscs_instance_3d.mesh.clear_surfaces();
+	selector_2d.clear();
+	selector_3d.clear();
 
 ##########################################################################

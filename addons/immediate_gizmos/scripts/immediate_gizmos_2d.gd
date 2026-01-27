@@ -10,31 +10,31 @@ func reset():
 ##########################################################################
 
 func line(from : Vector2, to : Vector2, drawColor : Color = color) -> void:
-	ImmediateGizmosInternal.drawLine2D(from, to);
-	ImmediateGizmosInternal.endDraw2D(drawColor, transform);
+	ImmediateGizmosInternal.draw_line_2d(from, to);
+	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
 	
-func lineStrip(points : Array[Vector2], drawColor : Color = color) -> void:
-	ImmediateGizmosInternal.points2D.append_array(points);
-	ImmediateGizmosInternal.endDraw2D(drawColor, transform);
+func line_strip(points : Array[Vector2], drawColor : Color = color) -> void:
+	ImmediateGizmosInternal.points_2d.append_array(points);
+	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
 	
-func linePolygon(points : Array[Vector2], drawColor : Color = color) -> void:
-	ImmediateGizmosInternal.points2D.append_array(points);
+func line_polygon(points : Array[Vector2], drawColor : Color = color) -> void:
+	ImmediateGizmosInternal.points_2d.append_array(points);
 	if (points.size() <= 0): return;
-	ImmediateGizmosInternal.drawPoint2D(points[0])
-	ImmediateGizmosInternal.endDraw2D(drawColor, transform);
+	ImmediateGizmosInternal.draw_point_2d(points[0])
+	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
 	
-func lineArc(center : Vector2, startPoint : Vector2, radians : float, drawColor : Color = color) -> void:
-	ImmediateGizmosInternal.drawArc2D(center, startPoint, radians);
-	ImmediateGizmosInternal.endDraw2D(drawColor, transform);
+func line_arc(center : Vector2, startPoint : Vector2, radians : float, drawColor : Color = color) -> void:
+	ImmediateGizmosInternal.draw_arc_2d(center, startPoint, radians);
+	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
 
-func lineCircle(center : Vector2, radius : float, drawColor : Color = color) -> void:
-	ImmediateGizmosInternal.drawArc2D(center, Vector2.UP * radius, TAU);
-	ImmediateGizmosInternal.endDraw2D(drawColor, transform);
+func line_circle(center : Vector2, radius : float, drawColor : Color = color) -> void:
+	ImmediateGizmosInternal.draw_arc_2d(center, Vector2.UP * radius, TAU);
+	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
 	
-func lineCapsule(center : Vector2, radius : float, height : float, drawColor : Color = color) -> void:
+func line_capsule(center : Vector2, radius : float, height : float, drawColor : Color = color) -> void:
 	height -= radius * 2;
 	if (height < 0):
-		return lineCircle(center, radius, drawColor);
+		return line_circle(center, radius, drawColor);
 	
 	var topCenter := center + Vector2(0.0, height * 0.5);
 	var bottomCenter := center - Vector2(0.0, height * 0.5);
@@ -43,24 +43,24 @@ func lineCapsule(center : Vector2, radius : float, height : float, drawColor : C
 	var west := Vector2.LEFT * radius;
 	
 	# Zero overlaps, super cool!
-	ImmediateGizmosInternal.drawArc2D(topCenter, east, PI);
-	ImmediateGizmosInternal.drawArc2D(bottomCenter, west, PI);
-	ImmediateGizmosInternal.drawPoint2D(topCenter + east);
-	ImmediateGizmosInternal.endDraw2D(drawColor, transform);
+	ImmediateGizmosInternal.draw_arc_2d(topCenter, east, PI);
+	ImmediateGizmosInternal.draw_arc_2d(bottomCenter, west, PI);
+	ImmediateGizmosInternal.draw_point_2d(topCenter + east);
+	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
 	
-func lineRect(center : Vector2, size : Vector2, drawColor : Color = color) -> void:
+func line_rect(center : Vector2, size : Vector2, drawColor : Color = color) -> void:
 	var tl := center + (Vector2(-1, -1) * size);
 	var tr := center + (Vector2(1, -1) * size);
 	var bl := center + (Vector2(-1, 1) * size);
 	var br := center + (Vector2(1, 1) * size);
 	
 	# 3 Overlaps. Argh.
-	ImmediateGizmosInternal.drawLine2D(tl, tr);
-	ImmediateGizmosInternal.drawLine2D(br, bl);
-	ImmediateGizmosInternal.drawPoint2D(tl);
-	ImmediateGizmosInternal.endDraw2D(drawColor, transform);
+	ImmediateGizmosInternal.draw_line_2d(tl, tr);
+	ImmediateGizmosInternal.draw_line_2d(br, bl);
+	ImmediateGizmosInternal.draw_point_2d(tl);
+	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
 	
-func lineSquare(center : Vector2, size : float, drawColor : Color = color) -> void:
-	lineRect(center, Vector2.ONE * size, drawColor);
+func line_square(center : Vector2, size : float, drawColor : Color = color) -> void:
+	line_rect(center, Vector2.ONE * size, drawColor);
 
 ##########################################################################

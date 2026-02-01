@@ -1,37 +1,37 @@
-extends Node
+class_name ImmediateGizmos2D
 
-var color : Color = Color.WHITE;
-var transform : Transform2D = Transform2D.IDENTITY;
+static var color : Color = Color.WHITE;
+static var transform : Transform2D = Transform2D.IDENTITY;
 
-func reset():
+static func reset():
 	color = Color.WHITE;
 	transform = Transform2D.IDENTITY;
 	
 ##########################################################################
 
-func line(from : Vector2, to : Vector2, drawColor : Color = color) -> void:
+static func line(from : Vector2, to : Vector2, drawColor : Color = color) -> void:
 	ImmediateGizmosInternal.draw_line_2d(from, to);
 	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
 	
-func line_strip(points : Array[Vector2], drawColor : Color = color) -> void:
+static func line_strip(points : Array[Vector2], drawColor : Color = color) -> void:
 	ImmediateGizmosInternal.points_2d.append_array(points);
 	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
 	
-func line_polygon(points : Array[Vector2], drawColor : Color = color) -> void:
+static func line_polygon(points : Array[Vector2], drawColor : Color = color) -> void:
 	ImmediateGizmosInternal.points_2d.append_array(points);
 	if (points.size() <= 0): return;
 	ImmediateGizmosInternal.draw_point_2d(points[0])
 	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
 	
-func line_arc(center : Vector2, startPoint : Vector2, radians : float, drawColor : Color = color) -> void:
+static func line_arc(center : Vector2, startPoint : Vector2, radians : float, drawColor : Color = color) -> void:
 	ImmediateGizmosInternal.draw_arc_2d(center, startPoint, radians);
 	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
 
-func line_circle(center : Vector2, radius : float, drawColor : Color = color) -> void:
+static func line_circle(center : Vector2, radius : float, drawColor : Color = color) -> void:
 	ImmediateGizmosInternal.draw_arc_2d(center, Vector2.UP * radius, TAU);
 	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
 	
-func line_capsule(center : Vector2, radius : float, height : float, drawColor : Color = color) -> void:
+static func line_capsule(center : Vector2, radius : float, height : float, drawColor : Color = color) -> void:
 	height -= radius * 2;
 	if (height < 0):
 		return line_circle(center, radius, drawColor);
@@ -48,7 +48,7 @@ func line_capsule(center : Vector2, radius : float, height : float, drawColor : 
 	ImmediateGizmosInternal.draw_point_2d(topCenter + east);
 	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
 	
-func line_rect(center : Vector2, size : Vector2, drawColor : Color = color) -> void:
+static func line_rect(center : Vector2, size : Vector2, drawColor : Color = color) -> void:
 	var tl := center + (Vector2(-1, -1) * size);
 	var tr := center + (Vector2(1, -1) * size);
 	var bl := center + (Vector2(-1, 1) * size);
@@ -60,7 +60,7 @@ func line_rect(center : Vector2, size : Vector2, drawColor : Color = color) -> v
 	ImmediateGizmosInternal.draw_point_2d(tl);
 	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
 	
-func line_square(center : Vector2, size : float, drawColor : Color = color) -> void:
+static func line_square(center : Vector2, size : float, drawColor : Color = color) -> void:
 	line_rect(center, Vector2.ONE * size, drawColor);
 
 ##########################################################################

@@ -1,7 +1,10 @@
+@tool
 extends Node
 class_name ImmediateGizmosInternal;
 
 const target_process_priority = -999;
+const __expected_id : int = 0x1eaf1e55;
+@onready var __id := __expected_id;
 
 static var gizmo_root : ImmediateGizmosInternal = null;
 static var gizmo_material_2d : ShaderMaterial = preload("res://addons/immediate_gizmos/materials/immediate_gizmos_2d.tres");
@@ -31,7 +34,7 @@ class ImmediateGizmosRenderInstance:
 			_meshInstance.material = ImmediateGizmosInternal.gizmo_material_2d;
 
 		ImmediateGizmosInternal.gizmo_root.add_child(meshInstance);
-		
+
 class ImmediateGizmosRenderBlock:
 	var instance_counter := 0;
 	var instances : Array[ImmediateGizmosRenderInstance] = [];
@@ -70,17 +73,37 @@ class ImmediateGizmosRenderSelector:
 		if (Engine.is_in_physics_frame()):
 			return physics_process_block.clear();
 		return process_block.clear();
-		
+
 static var selector_2d : ImmediateGizmosRenderSelector = ImmediateGizmosRenderSelector.new(false);
 static var selector_3d : ImmediateGizmosRenderSelector = ImmediateGizmosRenderSelector.new(true);
 
 static func get_instance(is3D : bool) -> ImmediateGizmosRenderInstance:
 	if (gizmo_root == null):
 		assert(ProjectSettings.get_setting("application/run/main_loop_type") == "SceneTree", "To use ImmediateGizmos, the project main loop must be of type 'SceneTree'");
-		var sceneTree := Engine.get_main_loop() as SceneTree;
-		gizmo_root = ImmediateGizmosInternal.new();
-		gizmo_root.name = "Gizmo Root";
-		sceneTree.root.add_child(gizmo_root);
+		
+		# Get root.
+		var sceneRoot : Node = (Engine.get_main_loop() as SceneTree).root;
+		if (Engine.is_editor_hint()):
+			sceneRoot = EditorInterface.get_edited_scene_root().get_parent();
+
+		var rootCounter = 1;
+		var rootName := "ImmediateGizmos";
+		var rootNode := sceneRoot.find_child(rootName, false, false);
+		while (rootNode != null || rootCounter == 0):
+			if (rootNode.get("__id") == __expected_id):
+				# Claim back root??
+				gizmo_root = rootNode;
+				break;
+			# Ignore same named node.
+			rootCounter += 1;
+			rootName = "ImmediateGizmos%d" % rootCounter;
+			rootNode = sceneRoot.find_child(rootName, false, false);
+
+		# Create root.
+		if (gizmo_root == null):
+			gizmo_root = ImmediateGizmosInternal.new();
+			gizmo_root.name = rootName;
+			sceneRoot.add_child(gizmo_root);
 
 	if (is3D):
 		return selector_3d.get_instance();
@@ -109,10 +132,14 @@ static func draw_arc_2d(center : Vector2, startPoint : Vector2, radians : float)
 		draw_point_2d(center + pos);
 
 static func end_draw_2d(color : Color, transform2d : Transform2D) -> void:
-	if (points_2d.size() <= 0): 
+	if (points_2d.size() <= 0):
 		return;
 
-	var instanceMesh := ImmediateGizmosInternal.get_instance(false).mesh;
+	var instance := ImmediateGizmosInternal.get_instance(false);
+	if (instance == null):
+		return;
+	var instanceMesh := instance.mesh;
+
 	instanceMesh.surface_begin(Mesh.PRIMITIVE_LINE_STRIP);
 	instanceMesh.surface_set_color(color);
 	for point : Vector2 in points_2d:
@@ -121,7 +148,7 @@ static func end_draw_2d(color : Color, transform2d : Transform2D) -> void:
 	instanceMesh.surface_end();
 
 	points_2d.clear();
-		
+
 ##########################################################################
 
 static var points_3d : Array[Vector3] = [];
@@ -145,10 +172,14 @@ static func draw_arc_3d(center : Vector3, axis : Vector3, startPoint : Vector3, 
 		draw_point_3d(center + pos);
 
 static func end_draw_3d(color : Color, transform3d : Transform3D) -> void:
-	if (points_3d.size() <= 0): 
+	if (points_3d.size() <= 0):
 		return;
 
-	var instanceMesh := ImmediateGizmosInternal.get_instance(true).mesh;
+	var instance := ImmediateGizmosInternal.get_instance(true);
+	if (instance == null):
+		return;
+	var instanceMesh := instance.mesh;
+
 	instanceMesh.surface_begin(Mesh.PRIMITIVE_LINE_STRIP);
 	instanceMesh.surface_set_color(color);
 	for point : Vector3 in points_3d:
@@ -162,6 +193,8 @@ static func end_draw_3d(color : Color, transform3d : Transform3D) -> void:
 func _ready() -> void:
 	process_priority = target_process_priority;
 	process_physics_priority = target_process_priority;
+	set_process(true);
+	set_physics_process(true);
 
 func _process(_delta: float) -> void:
 	selector_2d.clear();

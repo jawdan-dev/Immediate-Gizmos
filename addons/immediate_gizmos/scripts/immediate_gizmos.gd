@@ -1,12 +1,12 @@
 @tool
 extends Node
-class_name ImmediateGizmosInternal;
+class_name EditorImmediateGizmos;
 
 const target_process_priority = -999;
 const __expected_id : int = 0x1eaf1e55;
 @onready var __id := __expected_id;
 
-static var gizmo_root : ImmediateGizmosInternal = null;
+static var gizmo_root : EditorImmediateGizmos = null;
 static var gizmo_material_2d : ShaderMaterial = preload("res://addons/immediate_gizmos/materials/immediate_gizmos_2d.tres");
 static var gizmo_material_3d : ShaderMaterial = preload("res://addons/immediate_gizmos/materials/immediate_gizmos_3d.tres");
 
@@ -26,14 +26,14 @@ class ImmediateGizmosRenderInstance:
 		if (is3D):
 			var _meshInstance := meshInstance as MeshInstance3D;
 			_meshInstance.mesh = mesh;
-			_meshInstance.material_override = ImmediateGizmosInternal.gizmo_material_3d;
+			_meshInstance.material_override = EditorImmediateGizmos.gizmo_material_3d;
 		else:
 			var _meshInstance := meshInstance as MeshInstance2D;
 			_meshInstance.mesh = mesh;
 			_meshInstance.top_level = true;
-			_meshInstance.material = ImmediateGizmosInternal.gizmo_material_2d;
+			_meshInstance.material = EditorImmediateGizmos.gizmo_material_2d;
 
-		ImmediateGizmosInternal.gizmo_root.add_child(meshInstance);
+		EditorImmediateGizmos.gizmo_root.add_child(meshInstance);
 
 class ImmediateGizmosRenderBlock:
 	var instance_counter := 0;
@@ -101,7 +101,7 @@ static func get_instance(is3D : bool) -> ImmediateGizmosRenderInstance:
 
 		# Create root.
 		if (gizmo_root == null):
-			gizmo_root = ImmediateGizmosInternal.new();
+			gizmo_root = EditorImmediateGizmos.new();
 			gizmo_root.name = rootName;
 			sceneRoot.add_child(gizmo_root);
 
@@ -135,7 +135,7 @@ static func end_draw_2d(color : Color, transform2d : Transform2D) -> void:
 	if (points_2d.size() <= 0):
 		return;
 
-	var instance := ImmediateGizmosInternal.get_instance(false);
+	var instance := EditorImmediateGizmos.get_instance(false);
 	if (instance == null):
 		return;
 	var instanceMesh := instance.mesh;
@@ -175,7 +175,7 @@ static func end_draw_3d(color : Color, transform3d : Transform3D) -> void:
 	if (points_3d.size() <= 0):
 		return;
 
-	var instance := ImmediateGizmosInternal.get_instance(true);
+	var instance := EditorImmediateGizmos.get_instance(true);
 	if (instance == null):
 		return;
 	var instanceMesh := instance.mesh;

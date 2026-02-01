@@ -10,26 +10,26 @@ static func reset():
 ##########################################################################
 
 static func line(from : Vector2, to : Vector2, drawColor : Color = color) -> void:
-	ImmediateGizmosInternal.draw_line_2d(from, to);
-	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
+	EditorImmediateGizmos.draw_line_2d(from, to);
+	EditorImmediateGizmos.end_draw_2d(drawColor, transform);
 	
 static func line_strip(points : Array[Vector2], drawColor : Color = color) -> void:
-	ImmediateGizmosInternal.points_2d.append_array(points);
-	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
+	EditorImmediateGizmos.points_2d.append_array(points);
+	EditorImmediateGizmos.end_draw_2d(drawColor, transform);
 	
 static func line_polygon(points : Array[Vector2], drawColor : Color = color) -> void:
-	ImmediateGizmosInternal.points_2d.append_array(points);
+	EditorImmediateGizmos.points_2d.append_array(points);
 	if (points.size() <= 0): return;
-	ImmediateGizmosInternal.draw_point_2d(points[0])
-	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
+	EditorImmediateGizmos.draw_point_2d(points[0])
+	EditorImmediateGizmos.end_draw_2d(drawColor, transform);
 	
 static func line_arc(center : Vector2, startPoint : Vector2, radians : float, drawColor : Color = color) -> void:
-	ImmediateGizmosInternal.draw_arc_2d(center, startPoint, radians);
-	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
+	EditorImmediateGizmos.draw_arc_2d(center, startPoint, radians);
+	EditorImmediateGizmos.end_draw_2d(drawColor, transform);
 
 static func line_circle(center : Vector2, radius : float, drawColor : Color = color) -> void:
-	ImmediateGizmosInternal.draw_arc_2d(center, Vector2.UP * radius, TAU);
-	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
+	EditorImmediateGizmos.draw_arc_2d(center, Vector2.UP * radius, TAU);
+	EditorImmediateGizmos.end_draw_2d(drawColor, transform);
 	
 static func line_capsule(center : Vector2, radius : float, height : float, drawColor : Color = color) -> void:
 	height -= radius * 2;
@@ -43,10 +43,10 @@ static func line_capsule(center : Vector2, radius : float, height : float, drawC
 	var west := Vector2.LEFT * radius;
 	
 	# Zero overlaps, super cool!
-	ImmediateGizmosInternal.draw_arc_2d(topCenter, east, PI);
-	ImmediateGizmosInternal.draw_arc_2d(bottomCenter, west, PI);
-	ImmediateGizmosInternal.draw_point_2d(topCenter + east);
-	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
+	EditorImmediateGizmos.draw_arc_2d(topCenter, east, PI);
+	EditorImmediateGizmos.draw_arc_2d(bottomCenter, west, PI);
+	EditorImmediateGizmos.draw_point_2d(topCenter + east);
+	EditorImmediateGizmos.end_draw_2d(drawColor, transform);
 	
 static func line_rect(center : Vector2, size : Vector2, drawColor : Color = color) -> void:
 	var tl := center + (Vector2(-1, -1) * size);
@@ -55,10 +55,10 @@ static func line_rect(center : Vector2, size : Vector2, drawColor : Color = colo
 	var br := center + (Vector2(1, 1) * size);
 	
 	# 3 Overlaps. Argh.
-	ImmediateGizmosInternal.draw_line_2d(tl, tr);
-	ImmediateGizmosInternal.draw_line_2d(br, bl);
-	ImmediateGizmosInternal.draw_point_2d(tl);
-	ImmediateGizmosInternal.end_draw_2d(drawColor, transform);
+	EditorImmediateGizmos.draw_line_2d(tl, tr);
+	EditorImmediateGizmos.draw_line_2d(br, bl);
+	EditorImmediateGizmos.draw_point_2d(tl);
+	EditorImmediateGizmos.end_draw_2d(drawColor, transform);
 	
 static func line_square(center : Vector2, size : float, drawColor : Color = color) -> void:
 	line_rect(center, Vector2.ONE * size, drawColor);

@@ -32,8 +32,8 @@ class ImmediateGizmosRenderInstance:
 			_meshInstance.mesh = mesh;
 			_meshInstance.top_level = true;
 			_meshInstance.material = EditorImmediateGizmos.gizmo_material_2d;
-
-		EditorImmediateGizmos.gizmo_root.add_child(meshInstance);
+	
+		EditorImmediateGizmos.get_root().add_child(meshInstance);
 
 class ImmediateGizmosRenderBlock:
 	var instance_counter := 0;
@@ -77,37 +77,75 @@ class ImmediateGizmosRenderSelector:
 static var selector_2d : ImmediateGizmosRenderSelector = ImmediateGizmosRenderSelector.new(false);
 static var selector_3d : ImmediateGizmosRenderSelector = ImmediateGizmosRenderSelector.new(true);
 
-static func get_instance(is3D : bool) -> ImmediateGizmosRenderInstance:
-	if (gizmo_root == null):
-		assert(ProjectSettings.get_setting("application/run/main_loop_type") == "SceneTree", "To use ImmediateGizmos, the project main loop must be of type 'SceneTree'");
+static func get_scene_root() -> Node:
+	if (Engine.is_editor_hint()):
+		return EditorInterface.get_edited_scene_root().get_parent();
+
+	assert(ProjectSettings.get_setting("application/run/main_loop_type") == "SceneTree", "To use ImmediateGizmos, the project main loop must be of type 'SceneTree'");
+	return (Engine.get_main_loop() as SceneTree).root;
 		
-		# Get root.
-		var sceneRoot : Node = (Engine.get_main_loop() as SceneTree).root;
-		if (Engine.is_editor_hint()):
-			sceneRoot = EditorInterface.get_edited_scene_root().get_parent();
+static func get_root() -> EditorImmediateGizmos:
+	if (gizmo_root != null): 
+		return gizmo_root;
 
-		var rootCounter = 1;
-		var rootName := "ImmediateGizmos";
-		var rootNode := sceneRoot.find_child(rootName, false, false);
-		while (rootNode != null || rootCounter == 0):
-			if (rootNode.get("__id") == __expected_id):
-				# Claim back root??
-				gizmo_root = rootNode;
-				break;
-			# Ignore same named node.
-			rootCounter += 1;
-			rootName = "ImmediateGizmos%d" % rootCounter;
-			rootNode = sceneRoot.find_child(rootName, false, false);
+	# Get root.
+	var sceneRoot : Node = get_scene_root();
 
-		# Create root.
-		if (gizmo_root == null):
-			gizmo_root = EditorImmediateGizmos.new();
-			gizmo_root.name = rootName;
-			sceneRoot.add_child(gizmo_root);
-
+	var rootCounter = 1;
+	var rootName := "ImmediateGizmos";
+	var rootNode := sceneRoot.find_child(rootName, false, false);
+	while (rootNode != null):
+		if (rootNode.get("__id") == __expected_id):
+			# Claim back root??
+			gizmo_root = rootNode;
+			return gizmo_root;
+		
+		# Ignore same named node.
+		rootCounter += 1;
+		rootName = "ImmediateGizmos%d" % rootCounter;
+		rootNode = sceneRoot.find_child(rootName, false, false);
+	
+	# Create root.
+	gizmo_root = EditorImmediateGizmos.new();
+	gizmo_root.name = rootName;
+	sceneRoot.add_child(gizmo_root);
+	
+	return gizmo_root;
+	
+static func get_instance(is3D : bool) -> ImmediateGizmosRenderInstance:
 	if (is3D):
 		return selector_3d.get_instance();
 	return selector_2d.get_instance();
+
+##########################################################################
+
+static var gizmo_default_color := Color.TRANSPARENT; # Key
+
+static var draw_color : Color = Color.WHITE;
+static var draw_2d_transform : Transform2D = Transform2D.IDENTITY;
+static var draw_3d_transform : Transform3D = Transform3D.IDENTITY;
+static var draw_required_selection : Node = null;
+
+static func is_required_selection_met() -> bool:
+	if (draw_required_selection == null): 
+		return true;
+	if (!Engine.is_editor_hint()):
+		return false;
+	
+	var sceneRoot := get_scene_root();
+	var selected := draw_required_selection;
+	
+	while (selected != sceneRoot):
+		if (EditorInterface.get_selection().get_selected_nodes().has(selected)):
+			return true;
+		selected = selected.get_parent();
+	return false;	
+
+static func reset() -> void:
+	draw_color = Color.WHITE;
+	draw_2d_transform = Transform2D.IDENTITY;
+	draw_3d_transform = Transform3D.IDENTITY;
+	draw_required_selection = null;
 
 ##########################################################################
 
@@ -131,8 +169,11 @@ static func draw_arc_2d(center : Vector2, startPoint : Vector2, radians : float)
 		var pos = startPoint.rotated((i as float) * increment);
 		draw_point_2d(center + pos);
 
-static func end_draw_2d(color : Color, transform2d : Transform2D) -> void:
+static func end_draw_2d(color : Color) -> void:
 	if (points_2d.size() <= 0):
+		return;
+	if (!is_required_selection_met()): 
+		points_2d.clear();
 		return;
 
 	var instance := EditorImmediateGizmos.get_instance(false);
@@ -141,9 +182,9 @@ static func end_draw_2d(color : Color, transform2d : Transform2D) -> void:
 	var instanceMesh := instance.mesh;
 
 	instanceMesh.surface_begin(Mesh.PRIMITIVE_LINE_STRIP);
-	instanceMesh.surface_set_color(color);
+	instanceMesh.surface_set_color(color if (color != gizmo_default_color) else draw_color);
 	for point : Vector2 in points_2d:
-		var worldPoint := transform2d * point;
+		var worldPoint := draw_2d_transform * point;
 		instanceMesh.surface_add_vertex(Vector3(worldPoint.x, worldPoint.y, 0.0));
 	instanceMesh.surface_end();
 
@@ -171,8 +212,11 @@ static func draw_arc_3d(center : Vector3, axis : Vector3, startPoint : Vector3, 
 		var pos = startPoint.rotated(axis, (i as float) * increment);
 		draw_point_3d(center + pos);
 
-static func end_draw_3d(color : Color, transform3d : Transform3D) -> void:
+static func end_draw_3d(color : Color) -> void:
 	if (points_3d.size() <= 0):
+		return;
+	if (!is_required_selection_met()): 
+		points_3d.clear();
 		return;
 
 	var instance := EditorImmediateGizmos.get_instance(true);
@@ -181,9 +225,9 @@ static func end_draw_3d(color : Color, transform3d : Transform3D) -> void:
 	var instanceMesh := instance.mesh;
 
 	instanceMesh.surface_begin(Mesh.PRIMITIVE_LINE_STRIP);
-	instanceMesh.surface_set_color(color);
+	instanceMesh.surface_set_color(color if (color != gizmo_default_color) else draw_color);
 	for point : Vector3 in points_3d:
-		instanceMesh.surface_add_vertex(transform3d * point);
+		instanceMesh.surface_add_vertex(draw_3d_transform * point);
 	instanceMesh.surface_end();
 
 	points_3d.clear();
@@ -199,9 +243,11 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	selector_2d.clear();
 	selector_3d.clear();
+	reset();
 
 func _physics_process(_delta: float) -> void:
 	selector_2d.clear();
 	selector_3d.clear();
+	reset();
 
 ##########################################################################

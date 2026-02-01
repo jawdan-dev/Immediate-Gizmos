@@ -1,48 +1,52 @@
 class_name ImmediateGizmos3D
 
-static var color : Color = Color.WHITE;
-static var transform : Transform3D = Transform3D.IDENTITY;
+##########################################################################
 
-static func reset():
-	color = Color.WHITE;
-	transform = Transform3D.IDENTITY;
+static func set_color(color : Color): 
+	EditorImmediateGizmos.draw_color = color;
+static func set_transform(transform : Transform3D): 
+	EditorImmediateGizmos.draw_3d_transform = transform;
+static func set_required_selection(node : Node): 
+	EditorImmediateGizmos.draw_required_selection = node;
+static func reset(): 
+	EditorImmediateGizmos.reset();
 	
 ##########################################################################
 
-static func line(from : Vector3, to : Vector3, drawColor : Color = color) -> void:
+static func line(from : Vector3, to : Vector3, color : Color = EditorImmediateGizmos.gizmo_default_color) -> void:
 	EditorImmediateGizmos.draw_line_3d(from, to);
-	EditorImmediateGizmos.end_draw_3d(drawColor, transform);
+	EditorImmediateGizmos.end_draw_3d(color);
 	
-static func line_strip(points : Array[Vector3], drawColor : Color = color) -> void:
+static func line_strip(points : Array[Vector3], color : Color = EditorImmediateGizmos.gizmo_default_color) -> void:
 	EditorImmediateGizmos.points_3d.append_array(points);
-	EditorImmediateGizmos.end_draw_3d(drawColor, transform);
+	EditorImmediateGizmos.end_draw_3d(color);
 	
-static func line_polygon(points : Array[Vector3], drawColor : Color = color) -> void:
+static func line_polygon(points : Array[Vector3], color : Color = EditorImmediateGizmos.gizmo_default_color) -> void:
 	EditorImmediateGizmos.points_3d.append_array(points);
 	if (points.size() <= 0): return;
 	EditorImmediateGizmos.draw_point_3d(points[0])
-	EditorImmediateGizmos.end_draw_3d(drawColor, transform);
+	EditorImmediateGizmos.end_draw_3d(color);
 	
-static func line_arc(center : Vector3, axis : Vector3, startPoint : Vector3, radians : float, drawColor : Color = color) -> void:
+static func line_arc(center : Vector3, axis : Vector3, startPoint : Vector3, radians : float, color : Color = EditorImmediateGizmos.gizmo_default_color) -> void:
 	EditorImmediateGizmos.draw_arc_3d(center, axis, startPoint, radians);
-	EditorImmediateGizmos.end_draw_3d(drawColor, transform);
+	EditorImmediateGizmos.end_draw_3d(color);
 
-static func line_circle(center : Vector3, axis : Vector3, radius : float, drawColor : Color = color) -> void:
+static func line_circle(center : Vector3, axis : Vector3, radius : float, color : Color = EditorImmediateGizmos.gizmo_default_color) -> void:
 	var against := Vector3.RIGHT if axis.is_equal_approx(Vector3.UP) else Vector3.UP;
 	var startDirection := axis.cross(against).normalized();
 	EditorImmediateGizmos.draw_arc_3d(center, axis, startDirection * radius, TAU);
-	EditorImmediateGizmos.end_draw_3d(drawColor, transform);
+	EditorImmediateGizmos.end_draw_3d(color);
 
-static func line_sphere(center : Vector3, radius : float, drawColor : Color = color) -> void:
+static func line_sphere(center : Vector3, radius : float, color : Color = EditorImmediateGizmos.gizmo_default_color) -> void:
 	EditorImmediateGizmos.draw_arc_3d(center, Vector3.RIGHT, Vector3.UP * radius, TAU);
 	EditorImmediateGizmos.draw_arc_3d(center, Vector3.UP, Vector3.UP * radius, TAU);
 	EditorImmediateGizmos.draw_arc_3d(center, Vector3.FORWARD, Vector3.UP * radius, TAU);
-	EditorImmediateGizmos.end_draw_3d(drawColor, transform);
+	EditorImmediateGizmos.end_draw_3d(color);
 	
-static func line_capsule(center : Vector3, radius : float, height : float, drawColor : Color = color) -> void:
+static func line_capsule(center : Vector3, radius : float, height : float, color : Color = EditorImmediateGizmos.gizmo_default_color) -> void:
 	height -= radius * 2;
 	if (height < 0):
-		return line_sphere(center, radius, drawColor);
+		return line_sphere(center, radius, color);
 	
 	var topCenter := center + Vector3(0.0, height * 0.5, 0.0);
 	var bottomCenter := center - Vector3(0.0, height * 0.5, 0.0);
@@ -60,9 +64,9 @@ static func line_capsule(center : Vector3, radius : float, height : float, drawC
 	EditorImmediateGizmos.draw_arc_3d(bottomCenter, Vector3.FORWARD, east, PI);
 	EditorImmediateGizmos.draw_arc_3d(bottomCenter, Vector3.UP, west, TAU);
 	EditorImmediateGizmos.draw_arc_3d(topCenter, Vector3.UP, west, TAU * 0.75);
-	EditorImmediateGizmos.end_draw_3d(drawColor, transform);
+	EditorImmediateGizmos.end_draw_3d(color);
 	
-static func line_cuboid(center : Vector3, radius : Vector3, drawColor : Color = color) -> void:
+static func line_cuboid(center : Vector3, radius : Vector3, color : Color = EditorImmediateGizmos.gizmo_default_color) -> void:
 	var tlb := center + (Vector3(1, 1, -1) * radius);
 	var tlf := center + (Vector3(1, 1, 1) * radius);
 	var trb := center + (Vector3(-1, 1, -1) * radius);
@@ -83,9 +87,9 @@ static func line_cuboid(center : Vector3, radius : Vector3, drawColor : Color = 
 	EditorImmediateGizmos.draw_line_3d(brf, brb);
 	EditorImmediateGizmos.draw_point_3d(blb);
 	EditorImmediateGizmos.draw_line_3d(brb, trb);
-	EditorImmediateGizmos.end_draw_3d(drawColor, transform);
+	EditorImmediateGizmos.end_draw_3d(color);
 	
-static func line_cube(center : Vector3, radius : float, drawColor : Color = color) -> void:
-	line_cuboid(center, Vector3.ONE * radius, drawColor);
+static func line_cube(center : Vector3, radius : float, color : Color = EditorImmediateGizmos.gizmo_default_color) -> void:
+	line_cuboid(center, Vector3.ONE * radius, color);
 
 ##########################################################################

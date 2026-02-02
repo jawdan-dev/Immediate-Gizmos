@@ -8,6 +8,10 @@ static func set_transform(transform : Transform3D):
 	EditorImmediateGizmos.draw_3d_transform = transform;
 static func set_required_selection(node : Node): 
 	EditorImmediateGizmos.draw_required_selection = node;
+static func set_font(font : Font): 
+	EditorImmediateGizmos.draw_font = font;
+static func set_font_size(fontSize : int): 
+	EditorImmediateGizmos.draw_font_size = fontSize;
 static func reset(): 
 	EditorImmediateGizmos.reset();
 	
@@ -91,5 +95,10 @@ static func line_cuboid(center : Vector3, radius : Vector3, color : Color = Edit
 	
 static func line_cube(center : Vector3, radius : float, color : Color = EditorImmediateGizmos.gizmo_default_color) -> void:
 	line_cuboid(center, Vector3.ONE * radius, color);
+
+##########################################################################
+
+static func draw_text(text : String, position : Vector3, hAlign : HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT, vAlign : VerticalAlignment = VERTICAL_ALIGNMENT_BOTTOM, height : float = 0.25):
+	EditorImmediateGizmos.draw_text_3d(text, position, hAlign, vAlign, height);
 
 ##########################################################################

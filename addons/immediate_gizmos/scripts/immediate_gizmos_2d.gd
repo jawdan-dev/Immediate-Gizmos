@@ -8,6 +8,10 @@ static func set_transform(transform : Transform2D):
 	EditorImmediateGizmos.draw_2d_transform = transform;
 static func set_required_selection(node : Node): 
 	EditorImmediateGizmos.draw_required_selection = node;
+static func set_font(font : Font): 
+	EditorImmediateGizmos.draw_font = font;
+static func set_font_size(fontSize : int): 
+	EditorImmediateGizmos.draw_font_size = fontSize;
 static func reset(): 
 	EditorImmediateGizmos.reset();
 	
@@ -66,5 +70,10 @@ static func line_rect(center : Vector2, size : Vector2, color : Color = EditorIm
 	
 static func line_square(center : Vector2, size : float, color : Color = EditorImmediateGizmos.gizmo_default_color) -> void:
 	line_rect(center, Vector2.ONE * size, color);
+
+##########################################################################
+
+static func draw_text(text : String, position : Vector2, hAlign : HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT, vAlign : VerticalAlignment = VERTICAL_ALIGNMENT_BOTTOM, scale : float = 0.25):
+	EditorImmediateGizmos.draw_text_2d(text, position, hAlign, vAlign, scale);
 
 ##########################################################################

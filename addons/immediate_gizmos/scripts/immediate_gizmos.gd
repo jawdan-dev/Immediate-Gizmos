@@ -35,8 +35,9 @@ static func is_required_selection_met() -> bool:
 	var sceneRoot := get_scene_root();
 	var selected := draw_required_selection;
 	
-	while (selected != sceneRoot):
-		if (EditorInterface.get_selection().get_selected_nodes().has(selected)):
+	var editorInterface := Engine.get_singleton("EditorInterface");
+	while (editorInterface != null && selected != sceneRoot):
+		if (editorInterface.get_selection().get_selected_nodes().has(selected)):
 			return true;
 		selected = selected.get_parent();
 	return false;	
@@ -455,7 +456,9 @@ static func get_render_block(renderMode : RenderMode) -> RenderBlock:
 
 static func get_scene_root() -> Node:
 	if (Engine.is_editor_hint()):
-		return EditorInterface.get_edited_scene_root().get_parent();
+		var editorInterface := Engine.get_singleton("EditorInterface");
+		assert(editorInterface != null);
+		return editorInterface.get_edited_scene_root().get_parent();
 
 	assert(ProjectSettings.get_setting("application/run/main_loop_type") == "SceneTree", "To use ImmediateGizmos, the project main loop must be of type 'SceneTree'");
 	return (Engine.get_main_loop() as SceneTree).root;

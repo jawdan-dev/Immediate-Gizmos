@@ -29,9 +29,7 @@ jobs:
           cp LICENSE addons/immediate_gizmos/LICENSE
           cp README.md addons/immediate_gizmos/README.md
       - name: Commit files
-        run: |
-          git add addons/immediate_gizmos/LICENSE addons/immediate_gizmos/README.md
-          git config user.name actions-bot
-          git config user.email actions-bot@users.noreply.github.com
-          git commit -m "docs: update addon license and readme"
-          git push origin main
+        uses: devops-infra/action-commit-push@v1.0.3
+        with:
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
+          commit_message: "docs: update addon license and readme"

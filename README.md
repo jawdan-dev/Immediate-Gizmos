@@ -25,7 +25,7 @@ Immediate-mode gizmos for all to use!
 
 ## About
 *ImmediateGizmos* is an immediate-mode gizmos drawing plugin/addon for *Godot 4*!
-*ImmediateGizmos* is designed to allow you to draw simple gizmos wherever and whenever in the code of your project, including in release builds!
+*ImmediateGizmos* is designed to allow you to draw simple gizmos and text wherever and whenever in the code of your project, including in release builds!
 
 ### Examples
 <img src="./media/usage/spectrum_shift.gif" alt="Example debug usage in the game Spectrum Shift" width=100%>

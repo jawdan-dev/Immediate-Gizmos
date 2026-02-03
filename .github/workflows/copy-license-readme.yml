@@ -12,6 +12,8 @@ on:
       - LICENSE
       - README.md
 
+permissions: write-all
+
 concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true

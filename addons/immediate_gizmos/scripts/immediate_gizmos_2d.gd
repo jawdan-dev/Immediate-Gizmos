@@ -73,7 +73,7 @@ static func line_square(center : Vector2, size : float, color : Color = EditorIm
 
 ##########################################################################
 
-static func draw_text(text : String, position : Vector2, hAlign : HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT, vAlign : VerticalAlignment = VERTICAL_ALIGNMENT_BOTTOM, scale : float = 0.25):
-	EditorImmediateGizmos.draw_text_2d(text, position, hAlign, vAlign, scale);
+static func draw_text(text : String, position : Vector2, hAlign : HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT, vAlign : VerticalAlignment = VERTICAL_ALIGNMENT_BOTTOM, height : float = 0.25):
+	EditorImmediateGizmos.draw_text_2d(text, position, hAlign, vAlign, height);
 
 ##########################################################################

@@ -44,8 +44,9 @@ static func line_circle(center : Vector3, axis : Vector3, radius : float, color 
 
 static func line_sphere(center : Vector3, radius : float, color : Color = EditorImmediateGizmos.gizmo_default_color) -> void:
 	EditorImmediateGizmos.draw_arc_3d(center, Vector3.RIGHT, Vector3.UP * radius, TAU);
+	EditorImmediateGizmos.draw_arc_3d(center, Vector3.FORWARD, Vector3.UP * radius, TAU * 0.25);
 	EditorImmediateGizmos.draw_arc_3d(center, Vector3.UP, Vector3.RIGHT * radius, TAU);
-	EditorImmediateGizmos.draw_arc_3d(center, Vector3.FORWARD, Vector3.UP * radius, TAU);
+	EditorImmediateGizmos.draw_arc_3d(center, Vector3.FORWARD, Vector3.RIGHT * radius, TAU * 0.75);
 	EditorImmediateGizmos.end_draw_3d(color);
 	
 static func line_capsule(center : Vector3, radius : float, height : float, color : Color = EditorImmediateGizmos.gizmo_default_color) -> void:

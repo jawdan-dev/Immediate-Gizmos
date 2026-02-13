@@ -1,4 +1,4 @@
-name: LICENSE and README Addon Copier
+name: Copy files into addon
 
 on:
   workflow_dispatch:
@@ -7,10 +7,12 @@ on:
     paths:
       - LICENSE
       - README.md
+      - examples/
   pull_request:
     paths:
       - LICENSE
       - README.md
+      - examples/
 
 permissions: write-all
 
@@ -28,6 +30,7 @@ jobs:
         run: |
           cp LICENSE addons/immediate_gizmos/LICENSE
           cp README.md addons/immediate_gizmos/README.md
+          cp -r examples/ addons/immediate_gizmos/
       - name: Commit files
         uses: devops-infra/action-commit-push@v1.0.3
         with:

@@ -340,7 +340,7 @@ class TextRenderBlock:
 			region = Rect2i(Vector2i.ZERO, viewport.size);
 			
 		func draw_text(text : String, font : Font, fontSize : int) -> Rect2i:
-			var maxWidth := min(region.size.x, EditorImmediateGizmos.draw_font_max_width);
+			var maxWidth := mini(region.size.x, EditorImmediateGizmos.draw_font_max_width);
 			var sizei := Vector2i(font.get_multiline_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, maxWidth, fontSize).ceil());
 			var ascent := font.get_ascent(fontSize);
 			

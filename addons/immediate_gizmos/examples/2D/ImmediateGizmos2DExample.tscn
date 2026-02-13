@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://b5nagqmwpvqug"]
+
+[ext_resource type="Script" uid="uid://sjv744e80cyj" path="res://addons/immediate_gizmos/examples/2D/gizmos.gd" id="1_8ohfy"]
+[ext_resource type="Script" uid="uid://cdsscndnmafif" path="res://addons/immediate_gizmos/examples/2D/select_me_in_the_editor.gd" id="2_sgac4"]
+
+[node name="ImmediateGizmos2DExample" type="Node2D" unique_id=1135671879]
+
+[node name="Gizmos" type="Node2D" parent="." unique_id=892690139]
+script = ExtResource("1_8ohfy")
+
+[node name="Select me in the editor!" type="Node2D" parent="." unique_id=1912449888]
+position = Vector2(8.17, 0)
+script = ExtResource("2_sgac4")

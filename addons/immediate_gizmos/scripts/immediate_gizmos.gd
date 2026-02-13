@@ -553,12 +553,12 @@ static func end_draw_3d(color : Color) -> void:
 
 static func draw_text_2d(text : String, position : Vector2, hAlign : HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT, vAlign : VerticalAlignment = VERTICAL_ALIGNMENT_BOTTOM, height : float = 0.25) -> void:
 	var renderBlock := EditorImmediateGizmos.get_render_block(RenderMode.Gizmos_Text_2D) as TextRenderBlock;
-	if (renderBlock != null):
+	if (is_required_selection_met() && renderBlock != null):
 		renderBlock.draw_text_2d(text, position, hAlign, vAlign, height);
 		
 static func draw_text_3d(text : String, position : Vector3, hAlign : HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT, vAlign : VerticalAlignment = VERTICAL_ALIGNMENT_BOTTOM, height : float = 0.25) -> void:
 	var renderBlock := EditorImmediateGizmos.get_render_block(RenderMode.Gizmos_Text_3D) as TextRenderBlock;
-	if (renderBlock != null):
+	if (is_required_selection_met() && renderBlock != null):
 		renderBlock.draw_text_3d(text, position, hAlign, vAlign, height);
 	
 ##########################################################################

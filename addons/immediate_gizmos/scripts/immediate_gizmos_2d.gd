@@ -1,5 +1,6 @@
 @tool
 extends Node
+class_name ImmediateGizmos2D
 
 ##########################################################################
 
